@@ -1163,7 +1163,7 @@
           "step": 600
         },
         {
-          "exemplar": false,
+          "exemplar": true,
           "expr": "container_state_health_status{status!~\"healthy|none\", name !=\"\"} == 1",
           "hide": false,
           "instant": true,
@@ -1172,9 +1172,10 @@
           "refId": "B"
         },
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "container_state_health_status{status=\"none\", name !=\"\"} == 1",
           "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "{{name}}",
           "refId": "C"
@@ -1241,7 +1242,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(time() - container_last_seen{name !=\"\"} < 30) by (name) - 1 + sum(changes(container_state_startedat{name!=\"\"}[1d])) by (name)",
+          "expr": "sum(changes(container_state_startedat{name!=\"\"}[1d])) by (name)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -1942,7 +1943,7 @@
       "type": "table-old"
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 32,
   "style": "dark",
   "tags": [],
@@ -1950,7 +1951,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1981,5 +1982,5 @@
   "timezone": "browser",
   "title": "Docker and OS metrics",
   "uid": "Ss3q6hSZk",
-  "version": 15
+  "version": 19
 }

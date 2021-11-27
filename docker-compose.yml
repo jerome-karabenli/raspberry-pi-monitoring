@@ -106,6 +106,12 @@ services:
       - monitoring
     # ports:
     #   - 9100:9100
+    healthcheck:
+      test: wget --spider -q http://localhost:9100 || exit 1
+      interval: 10s
+      retries: 2
+      start_period: 5s
+      timeout: 3s
     deploy:
       resources:
         limits:

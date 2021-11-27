@@ -71,6 +71,12 @@ services:
       - 9093:9093
     networks:
       - monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9093/-/healthy"]
+      start_period: 30s
+      retries: 3
+      timeout: 5s
+      interval: 30s
     deploy:
       resources:
         limits:

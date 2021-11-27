@@ -1,4 +1,37 @@
 {
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.2.5"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph (old)",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table-old",
+      "name": "Table (old)",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -23,7 +56,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 10566,
   "graphTooltip": 1,
-  "id": 1,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -185,7 +218,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 2,
           "mappings": [
             {
               "options": {
@@ -197,8 +229,6 @@
               "type": "special"
             }
           ],
-          "max": 3978321920,
-          "min": 0,
           "thresholds": {
             "mode": "percentage",
             "steps": [
@@ -216,7 +246,7 @@
               }
             ]
           },
-          "unit": "bits"
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -897,7 +927,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "node_filesystem_size_bytes{job=\"nas-node-exporter\", mountpoint=~\"/|/srv.*\"} - node_filesystem_free_bytes{job=\"nas-node-exporter\", mountpoint=~\"/|/srv.*\"}",
+          "expr": "node_filesystem_size_bytes{job=\"nas-node-exporter\", mountpoint=~\"/|/srv.*|/mnt\"} - node_filesystem_free_bytes{job=\"nas-node-exporter\", mountpoint=~\"/|/srv.*|/mnt\"}",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -915,6 +945,316 @@
       "type": "gauge"
     },
     {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "semi-dark-green",
+                  "index": 0,
+                  "text": "UP"
+                },
+                "to": 30
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "semi-dark-red",
+                  "index": 1,
+                  "text": "DOWN"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 50,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "time() - container_last_seen{name!=\"\"} < 30",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "{{name}}",
+          "metric": "node_disk_bytes_read",
+          "refId": "A",
+          "step": 600
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Container Status",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "semi-dark-green",
+                        "index": 0,
+                        "text": "Healthy"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "semi-dark-red",
+                        "index": 0,
+                        "text": "Unhealthy"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "semi-dark-blue",
+                        "index": 0,
+                        "text": "No-healthchecks"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 51,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "container_state_health_status{status=\"healthy\", name !=\"\"} == 1",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "{{name}}",
+          "metric": "node_disk_bytes_read",
+          "refId": "A",
+          "step": 600
+        },
+        {
+          "exemplar": false,
+          "expr": "container_state_health_status{status!~\"healthy|none\", name !=\"\"} == 1",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "container_state_health_status{status=\"none\", name !=\"\"} == 1",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "C"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Container Health Status",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 46
+      },
+      "id": 52,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "count(time() - container_last_seen{name !=\"\"} < 30) by (name) - 1 + sum(changes(container_state_startedat{name!=\"\"}[1d])) by (name)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Container restart count",
+      "type": "stat"
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -929,7 +1269,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 8,
@@ -962,26 +1302,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "rate(container_network_receive_bytes_total{name!=\"\", job=\"nas-cadvisor\"}[5m])",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{name}}",
-          "refId": "A",
-          "step": 240
-        },
-        {
-          "exemplar": true,
-          "expr": "max(rate(container_network_transmit_bytes_total{name!=\"\", job=\"nas-cadvisor\"}[5m])) by (name)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{name}}",
-          "refId": "B",
-          "step": 10
+          "refId": "A",
+          "step": 240
         }
       ],
       "thresholds": [],
@@ -1043,7 +1372,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 9,
@@ -1087,17 +1416,6 @@
           "legendFormat": "{{name}}",
           "refId": "A",
           "step": 240
-        },
-        {
-          "exemplar": true,
-          "expr": "rate(container_network_transmit_bytes_total{id=\"/\", job=\"nas-cadvisor\"}[$interval])",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "B",
-          "step": 10
         }
       ],
       "thresholds": [],
@@ -1159,7 +1477,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 35
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 1,
@@ -1192,7 +1510,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "exemplar": true,
+          "exemplar": false,
           "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\".+\", job=\"nas-cadvisor\"}[5m])) by (name) * 100",
           "format": "time_series",
           "hide": false,
@@ -1262,7 +1580,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 35
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 10,
@@ -1373,7 +1691,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 69
       },
       "hiddenSeries": false,
       "id": 38,
@@ -1480,7 +1798,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 77
       },
       "id": 42,
       "links": [],
@@ -1663,5 +1981,5 @@
   "timezone": "browser",
   "title": "Docker and OS metrics",
   "uid": "Ss3q6hSZk",
-  "version": 122
+  "version": 15
 }

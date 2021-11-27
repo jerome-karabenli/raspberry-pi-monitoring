@@ -138,7 +138,7 @@ services:
       - /sys/fs/cgroup:/cgroup:ro
       - /dev/disk/:/dev/disk:ro
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8098/healthz"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/healthz"]
       start_period: 15s
       retries: 3
       timeout: 5s
@@ -158,10 +158,10 @@ services:
     networks:
       - monitoring
     # ports:
-    #   - "8020:8080"
+    #   - "8080:8080"
     restart: always
     healthcheck:
-      test: wget --spider -q http://localhost:8020 || exit 1
+      test: wget --spider -q http://localhost:8080 || exit 1
       interval: 10s
       retries: 2
       start_period: 5s

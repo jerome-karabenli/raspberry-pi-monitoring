@@ -10,7 +10,7 @@ groups:
       severity: critical
     annotations:
       title: Container not seen more than 20s
-      description: "A container has disappeared\n  VALUE = {{ labels.name }}"
+      description: "A container has disappeared\n  VALUE = {{ $labels.name }}"
 
   # CONTAINER UNHEALTHY
   - alert: ContainerHunhealthy

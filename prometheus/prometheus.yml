@@ -28,7 +28,7 @@ scrape_configs:
       - targets: ['node-exporter:9100']
   - job_name: 'nas-docker-state-exporter'
     static_configs:
-      - targets: ['docker-state-exporter:8020']
+      - targets: ['docker-state-exporter:8080']
 
 # domain health metrics scrapping
   - job_name: 'blackbox-metrics'

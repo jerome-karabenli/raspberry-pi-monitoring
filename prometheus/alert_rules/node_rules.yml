@@ -2,7 +2,7 @@ groups:
 - name: Node
   rules:
 
-  ######## SEVERITY == CRITICAL ##########
+########## SEVERITY == CRITICAL ##########
   # HIGH MEMORY USAGE
   - alert: HostHighMemoryLoad
     expr: 100 - (avg_over_time(node_memory_MemAvailable_bytes[5m]) / avg_over_time(node_memory_MemTotal_bytes[5m])) * 100 > 90
@@ -15,7 +15,7 @@ groups:
 
   # HIGH CPU LOAD
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"[5m])) * 100) > 80
+    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
     for: 0m
     labels:
       severity: critical
@@ -24,7 +24,7 @@ groups:
       description: "CPU load is > 80%\n  VALUE = {{ $value }}%"
 
 
-  ######### SEVERITY == WARNING##############
+########## SEVERITY == WARNING ##############
   # HIGH MEMORY USAGE
   - alert: HostHighMemoryLoad
     expr: 100 - (avg_over_time(node_memory_MemAvailable_bytes[5m]) / avg_over_time(node_memory_MemTotal_bytes[5m])) * 100 > 70
@@ -37,7 +37,7 @@ groups:
 
   # HIGH CPU LOAD
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"[5m])) * 100) > 65
+    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 65
     for: 0m
     labels:
       severity: warning
@@ -59,7 +59,7 @@ groups:
 
   # HIGH CPU LOAD
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"[5m])) * 100) > 50
+    expr: 100 - (avg by(job) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 50
     for: 0m
     labels:
       severity: info

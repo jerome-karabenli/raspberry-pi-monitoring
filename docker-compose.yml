@@ -22,7 +22,11 @@ services:
       start_period: 30s
       retries: 3
       timeout: 5s
-      interval: 30s 
+      interval: 30s
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 # Prometheus database and metrics scrapping
   prometheus:
@@ -47,6 +51,10 @@ services:
       retries: 3
       timeout: 5s
       interval: 30s
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 # Prometheus alertmanager
   alertmanager:
@@ -63,6 +71,10 @@ services:
       - 9093:9093
     networks:
       - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 
 # Node exporter for machine metrics
@@ -88,6 +100,10 @@ services:
       - monitoring
     # ports:
     #   - 9100:9100
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 # Cadvisor for docker metrics
   cadvisor:
@@ -127,6 +143,10 @@ services:
       retries: 3
       timeout: 5s
       interval: 30s
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
   # Used for healthcheck and restart count
   docker-state-exporter:
@@ -146,6 +166,10 @@ services:
       retries: 2
       start_period: 5s
       timeout: 3s
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 # Blackbox exporter for domain metrics
   blackbox-exporter:
@@ -158,6 +182,10 @@ services:
     restart: always
     command:
       - '--config.file=/config/blackbox.yml'
+    deploy:
+      resources:
+        limits:
+          memory: '1G' #limit ram usage to 1g for this container
 
 
 

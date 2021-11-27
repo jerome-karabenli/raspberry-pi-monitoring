@@ -14,7 +14,7 @@ groups:
 
   # CONTAINER UNHEALTHY
   - alert: ContainerHunhealthy
-    expr: count(container_state_health_status{status!="healthy", name =~ ".+"} == 1) by (name, status)
+    expr: count(container_state_health_status{status!~"healthy|none", name =~ ".+"} == 1) by (name, status)
     for: 2m
     labels:
       severity: critical
@@ -34,7 +34,7 @@ groups:
 
   # CONTAINER CPU USAGE TOO HIGH
   - alert: ContainerCpuUsage
-    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[1m])) BY (instance, name) * 100) >= 50
+    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[5m])) BY (instance, name) * 100) >= 50
     for: 2m
     labels:
       severity: critical
@@ -44,7 +44,7 @@ groups:
 
   # CONTAINER MEMORY USAGE TOO HIGH
   - alert: ContainerMemoryUsage
-    expr: avg((avg_over_time(container_memory_usage_bytes{name != ""}[5m]) / container_spec_memory_limit_bytes{job="kebab-cadvisor-metrics"}) * 100) by (name, instance) > 80
+    expr: avg((avg_over_time(container_memory_usage_bytes{name!=""}[5m]) / container_spec_memory_limit_bytes) * 100) by (name, instance) > 80
     for: 0m
     labels:
       severity: critical
@@ -56,7 +56,7 @@ groups:
 
   # CONTAINER RESTART COUNT
   - alert: ContainerRestartCount
-    expr: sum(changes(container_state_startedat{name != ""}[1d])) by (name) > 0 < 2
+    expr: sum(changes(container_state_startedat{name != ""}[1d])) by (name) == 1
     for: 0m
     labels:
       severity: warning
@@ -76,7 +76,7 @@ groups:
 
   # CONTAINER MEMORY USAGE TOO HIGH
   - alert: ContainerMemoryUsage
-    expr: avg((avg_over_time(container_memory_usage_bytes{name != ""}[5m]) / container_spec_memory_limit_bytes{job="kebab-cadvisor-metrics"}) * 100) by (name, instance) > 50
+    expr: avg((avg_over_time(container_memory_usage_bytes{name != ""}[5m]) / container_spec_memory_limit_bytes) * 100) by (name, instance) > 50
     for: 0m
     labels:
       severity: warning
@@ -88,7 +88,7 @@ groups:
   ############ SEVERITY == INFO ################
   # CONTAINER CPU USAGE TOO HIGH
   - alert: ContainerCpuUsage
-    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[1m])) BY (instance, name) * 100) > 10 < 25
+    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[5m])) BY (instance, name) * 100) > 10 < 25
     for: 2m
     labels:
       severity: info
@@ -98,7 +98,7 @@ groups:
 
   # CONTAINER MEMORY USAGE TOO HIGH
   - alert: ContainerMemoryUsage
-    expr: avg((avg_over_time(container_memory_usage_bytes{name != ""}[5m]) / container_spec_memory_limit_bytes{job="kebab-cadvisor-metrics"}) * 100) by (name, instance) > 20
+    expr: avg((avg_over_time(container_memory_usage_bytes{name != ""}[5m]) / container_spec_memory_limit_bytes) * 100) by (name, instance) > 20
     for: 0m
     labels:
       severity: warning 

@@ -1,0 +1,47 @@
+# my global config
+global:
+  scrape_interval: 30s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 30s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+  - "alert_rules/*.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+scrape_configs:
+#local raspberry scrapping
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+  - job_name: 'nas-cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+  - job_name: 'nas-node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+  - job_name: 'nas-docker-state-exporter'
+    static_configs:
+      - targets: ['docker-state-exporter:8020']
+
+# domain health metrics scrapping
+  - job_name: 'blackbox-metrics'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - <your domain http adress> # Target to probe with http. eg: https://yourdomain.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115  # The blackbox exporter's real hostname:port.

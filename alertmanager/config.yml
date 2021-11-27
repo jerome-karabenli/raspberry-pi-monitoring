@@ -1,0 +1,29 @@
+global:
+  resolve_timeout: 5m
+  slack_api_url: '<your slack api url>'
+
+route:
+  receiver: 'slack'
+  repeat_interval: 30m
+
+receivers:
+- name: 'slack'
+  slack_configs:
+  - channel: '#<your alert channel>'
+    send_resolved: true
+    title: |-
+      {{ .CommonLabels.alertname }} for {{ .CommonLabels.job }}
+      {{- if gt (len .CommonLabels) (len .GroupLabels) -}}
+        {{" "}}
+      {{- end }}
+    text: >-
+      {{ range .Alerts -}}
+        *Alert:* {{ .Annotations.title }}{{ if .Labels.severity }} - `{{ .Labels.severity }}` {{- if eq .Labels.severity "warning" -}}
+            :danger:
+        {{- else if eq .Labels.severity "critical" -}}
+            :fire:
+        {{- else -}}
+            :information:
+        {{- end -}}{{ end }}
+      *Description:* {{ .Annotations.description }}{{"\n"}}
+      {{ end }}

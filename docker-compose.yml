@@ -1,0 +1,172 @@
+version: "3.8"
+
+services:
+# Grafana service for data viz
+  grafana:
+    image: grafana/grafana:8.2.5
+    container_name: grafana
+    restart: always
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=http://localhost/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      start_period: 30s
+      retries: 3
+      timeout: 5s
+      interval: 30s 
+
+# Prometheus database and metrics scrapping
+  prometheus:
+    image: prom/prometheus:v2.31.1
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ./prometheus/:/etc/prometheus/ #this is for prometheus config file
+      - prometheus:/prometheus 
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      start_period: 30s
+      retries: 3
+      timeout: 5s
+      interval: 30s
+
+# Prometheus alertmanager
+  alertmanager:
+    image: prom/alertmanager:v0.23.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/:/etc/alertmanager
+      - alertmanager:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: always
+    ports:
+      - 9093:9093
+    networks:
+      - monitoring
+
+
+# Node exporter for machine metrics
+  node-exporter:
+    image: prom/node-exporter:v1.3.0
+    container_name: node-exporter
+    command: 
+      - '--path.rootfs=/host' 
+      - '--collector.disable-defaults' #you can delete this, it's for perf optimization 
+      - '--collector.stat' #you can delete this, it's for perf optimization 
+      - '--collector.cpu' #you can delete this, it's for perf optimization
+      - '--collector.cpufreq' #you can delete this, it's for perf optimization
+      - '--collector.diskstats' #you can delete this, it's for perf optimization
+      - '--collector.filesystem' #you can delete this, it's for perf optimization
+      - '--collector.meminfo' #you can delete this, it's for perf optimization
+      - '--collector.netdev' #you can delete this, it's for perf optimization
+      - '--collector.thermal_zone' #you can delete this, it's for perf optimization
+    pid: host
+    restart: always
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - monitoring
+    # ports:
+    #   - 9100:9100
+
+# Cadvisor for docker metrics
+  cadvisor:
+    container_name: cadvisor
+    devices:
+      - /dev/kmsg
+    #ports:
+    #  - 8080:8080
+    image: unibaktr/cadvisor:0.39.1
+    ipc: shareable
+    networks:
+      - monitoring
+    privileged: true
+    restart: always
+    command: 
+      - '--housekeeping_interval=30s' #you can delete this, it's for perf optimization
+      - '--max_housekeeping_interval=35s' #you can delete this, it's for perf optimization
+      - '--global_housekeeping_interval=30s' #you can delete this, it's for perf optimization
+      - '--storage_duration=1m0s' #you can delete this, it's for perf optimization
+      - '--allow_dynamic_housekeeping=true' #you can delete this, it's for perf optimization
+      - '--docker_only=true' #you can delete this, it's for perf optimization
+      - '--store_container_labels=false' #you can delete this, it's for perf optimization
+      - '--disable_metrics=percpu,process,sched,tcp,udp,diskIO,disk' #you can delete this, it's for perf optimization
+      #- '-port=8080' #you can change cadvisor default running port, by default is 8080
+    security_opt:
+      - label=disable
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /sys/fs/cgroup:/cgroup:ro
+      - /dev/disk/:/dev/disk:ro
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8098/healthz"]
+      start_period: 15s
+      retries: 3
+      timeout: 5s
+      interval: 30s
+
+  # Used for healthcheck and restart count
+  docker-state-exporter:
+    image: ghcr.io/jerome-karabenli/docker-state-exporter:v0.1.1
+    container_name: docker-state-exporter
+    command: ["-listen-address=:8080", "-add-container-labels=false"]
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - monitoring
+    # ports:
+    #   - "8020:8080"
+    restart: always
+    healthcheck:
+      test: wget --spider -q http://localhost:8020 || exit 1
+      interval: 10s
+      retries: 2
+      start_period: 5s
+      timeout: 3s
+
+# Blackbox exporter for domain metrics
+  blackbox-exporter:
+    container_name: blackbox-exporter
+    image: prom/blackbox-exporter:v0.19.0
+    volumes:
+      - ./blackbox-exporter/:/config
+    networks:
+      - monitoring
+    restart: always
+    command:
+      - '--config.file=/config/blackbox.yml'
+
+
+
+
+networks:
+  monitoring:
+    external: true
+
+volumes:
+    grafana:
+    prometheus:
+    alertmanager:

@@ -1,0 +1,57 @@
+groups:
+##################### CRITICAL ############################
+- name: Blackbox
+  rules:
+  # PROBE FAIL
+  - alert: BlackboxProbeFailed
+    expr: probe_success == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      title: Blackbox probe failed (job {{ $labels.job }})
+      description: "VALUE = {{ $labels.instance }}"
+
+  # PROBE DURATION TOO HIGH
+  - alert: BlackboxSlowProbe
+    expr: avg_over_time(probe_duration_seconds[5m]) > 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: Blackbox slow probe (instance {{ $labels.instance }})
+      description: "Blackbox probe took more than 9s to complete\n  VALUE = {{ $value }}"
+
+  # PROBE HTTP CODE NOT OK
+  - alert: BlackboxProbeHttpFailure
+    expr: probe_http_status_code <= 199 OR probe_http_status_code >= 400
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      title: Blackbox probe HTTP failure (instance {{ $labels.instance }})
+      description: "HTTP status code is not 200-399\n  VALUE = {{ $value }}"
+
+  # SSL CERTIFICATE EXPIRE IN 3 DAYS
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})
+      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+########################## WARNING ##################################
+  # PROBE DURATION TOO HIGH
+  - alert: BlackboxSlowProbe
+    expr: avg_over_time(probe_duration_seconds[1m]) > 4
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      title: Blackbox slow probe (instance {{ $labels.instance }})
+      description: "Blackbox probe took more than 4s to complete\n  VALUE = {{ $value }}"
+
+
+######################## INFO ########################################

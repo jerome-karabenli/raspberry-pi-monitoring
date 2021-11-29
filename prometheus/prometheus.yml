@@ -37,7 +37,7 @@ scrape_configs:
       module: [http_2xx]  # Look for a HTTP 200 response.
     static_configs:
       - targets:
-        - <your domain http adress> # Target to probe with http. eg: https://yourdomain.com
+        - <your domain http adress> # Target to probe with http. eg: - http://podman.io
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

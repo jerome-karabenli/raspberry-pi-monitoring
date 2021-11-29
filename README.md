@@ -99,7 +99,7 @@ I make this to learn how I can monitor and have alert if something wrong happens
 - [ ] Why not testing this with [podman](https://podman.io/) seems to be better than docker, more secure, more lightweight, integrating pod concepts etc..
 
 
-See the [open issues](https://github.com/jerome-karabenli/readme-template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/jerome-karabenli/rpi-monitoring/issues) for a full list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->

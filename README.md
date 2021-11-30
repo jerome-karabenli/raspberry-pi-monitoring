@@ -1,7 +1,8 @@
 # rpi-monitoring
 <div id="top"></div>
 
-
+![](images/main-1.png)
+[all images](https://github.com/jerome-karabenli/rpi-monitoring/tree/main/images)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -75,11 +76,6 @@ I make this to learn how I can monitor and have alert if something wrong happens
 7. Access to your grafana web ui from your browser on port 3000 ``http://machine-ip:3000`` default Grafana username ``admin``, password ``admin``
 8. Add Prometheus as datasource => [grafana doc](https://grafana.com/docs/grafana/latest/datasources/add-a-data-source/), Prometheus url is ``http://prometheus:9090``
 9. Import [grafana dashboards](https://github.com/jerome-karabenli/rpi-monitoring/tree/main/dashboards) in json format - [grafana doc](https://grafana.com/docs/grafana/latest/dashboards/export-import/#import-dashboard)
-
-![](images/main-1.png)
-[all images](https://github.com/jerome-karabenli/rpi-monitoring/tree/main/images)
-
-
 
 
 

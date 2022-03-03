@@ -10,7 +10,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is a bundle of monitoring tools adapted for the raspberry pi platform (arm64) and optimized by default to limit CPU and memory usage. I recommend you to use 64 bit base image instead of 32 bits, therefore you cannot install some things like kubernates, or mongodb database(the apt repo's are outdated).
+This is a bundle of monitoring tools adapted for the raspberry pi platform (arm64) and optimized by default to limit CPU and memory usage. I recommend you to use 64 bit base image instead of 32 bits, therefore you cannot install some things like kubernetes, or mongodb database(the apt repo's are outdated).
 
 I make this to learn how I can monitor and have alert if something wrong happens. I've been inspired by this project:
 * [dockprom](https://github.com/stefanprodan/dockprom), It's a very complete bundle too, but not oriented specifically for RPI.
